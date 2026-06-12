@@ -2,6 +2,7 @@ package com.example.haritha.controller;
 
 import com.example.haritha.dto.ComplaintRequest;
 import com.example.haritha.service.ComplaintService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -10,14 +11,13 @@ import org.springframework.web.bind.annotation.*;
 public class ComplaintController {
 
     @Autowired
-    private ComplaintService service;
+    private ComplaintService complaintService;
 
-    // userId will come later from login session/JWT
-    @PostMapping("/submit/{userId}")
-    public String submit(
-            @RequestBody ComplaintRequest req,
-            @PathVariable Long userId
-    ) {
-        return service.submitComplaint(req, userId);
+    // 🟢 Submit complaint (JWT required)
+    @PostMapping("/submit")
+    public String submitComplaint(@RequestBody ComplaintRequest req,
+                                  HttpServletRequest request) {
+
+        return complaintService.submitComplaint(req, request);
     }
 }

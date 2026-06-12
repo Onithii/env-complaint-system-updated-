@@ -1,6 +1,7 @@
 package com.example.haritha.controller;
 
 import com.example.haritha.dto.LoginRequest;
+import com.example.haritha.dto.LoginResponse;
 import com.example.haritha.dto.RegisterRequest;
 import com.example.haritha.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +26,7 @@ public class UserController {
     // LOGIN USER
     // -------------------------
     @PostMapping("/login")
-    public String login(@RequestBody LoginRequest req) {
+    public LoginResponse login(@RequestBody LoginRequest req) {
         return userService.login(req);
     }
 }
