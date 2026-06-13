@@ -1,60 +1,62 @@
-package com.example.haritha.service; // This class belongs to the service package
+package com.example.haritha.service;
 
-import com.example.haritha.dto.LoginRequest; // DTO used to receive login data
-import com.example.haritha.dto.LoginResponse; // DTO used to send login response
-import com.example.haritha.dto.RegisterRequest; // DTO used to receive registration data
-import com.example.haritha.model.User; // User entity (database table)
-import com.example.haritha.repository.UserRepository; // Repository used to access database
-import com.example.haritha.util.JwtUtil; // Utility class for generating JWT tokens
+import com.example.haritha.dto.LoginRequest;
+import com.example.haritha.dto.LoginResponse;
+import com.example.haritha.dto.RegisterRequest;
+import com.example.haritha.model.User;
+import com.example.haritha.repository.UserRepository;
+import com.example.haritha.util.JwtUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-import org.springframework.beans.factory.annotation.Autowired; // Allows Spring to inject objects automatically
-import org.springframework.stereotype.Service; // Marks this class as a Service
-
-@Service // Tells Spring this class contains business logic
+@Service
 public class UserService {
 
-    @Autowired // Spring automatically creates and injects UserRepository
-    private UserRepository repo; // Used to save and retrieve users
+    @Autowired
+    private UserRepository repo;
 
-    @Autowired // Spring automatically creates and injects JwtUtil
-    private JwtUtil jwtUtil; // Used to generate JWT tokens
+    @Autowired
+    private JwtUtil jwtUtil;
 
-    // REGISTER
+    // 🟢 REGISTER USER
+    public String register(RegisterRequest req) {
 
-    public String register(RegisterRequest req) { // Method that handles user registration
+        User existingUser = repo.findByEmail(req.getEmail());
+        if (existingUser != null) {
+            throw new RuntimeException("User already exists");
+        }
 
-        User user = new User(); // Create a new User object
+        User user = new User();
+        user.setEmail(req.getEmail());
+        user.setPassword(req.getPassword());
+        user.setUsername(req.getUsername());
 
-        user.setUsername(req.getUsername()); // Copy username from DTO to User object
-        user.setFullName(req.getFullName()); // Copy full name from DTO to User object
-        user.setEmail(req.getEmail()); // Copy email from DTO to User object
-        user.setPassword(req.getPassword()); // Copy password from DTO to User object
-        user.setPhone(req.getPhone()); // Copy phone number from DTO to User object
+        repo.save(user);
 
-        user.setRole("CITIZEN"); // Give every new user the CITIZEN role
-        user.setActive(true); // Mark account as active
-
-        repo.save(user); // Save user to database
-
-        return "User registered successfully"; // Return success message
+        return "User registered successfully";
     }
 
-    // LOGIN
+    // 🟢 LOGIN USER (DEBUG VERSION ADDED)
+    public LoginResponse login(LoginRequest req) {
 
-    public LoginResponse login(LoginRequest req) { // Method that handles login
+        System.out.println("LOGIN START");
+        System.out.println("EMAIL: " + req.getEmail());
 
-        User user = repo.findByEmail(req.getEmail()); // Find user using email
+        User user = repo.findByEmail(req.getEmail());
 
-        if (user == null) { // Check if user exists
-            throw new RuntimeException("User not found"); // Stop and show error
+        System.out.println("USER FOUND: " + (user != null));
+
+        if (user == null) {
+            throw new RuntimeException("User not found");
         }
 
-        if (!user.getPassword().equals(req.getPassword())) { // Check password matches
-            throw new RuntimeException("Wrong password"); // Stop and show error
+        if (user.getPassword() == null ||
+                !user.getPassword().equals(req.getPassword())) {
+            throw new RuntimeException("Wrong password");
         }
 
-        String token = jwtUtil.generateToken(user.getEmail()); // Generate JWT token
+        String token = jwtUtil.generateToken(user.getEmail());
 
-        return new LoginResponse(token); // Return token inside LoginResponse DTO
+        return new LoginResponse(token);
     }
 }

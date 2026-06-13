@@ -1,21 +1,26 @@
 package com.example.haritha.service;
 
-import com.example.haritha.dto.ComplaintRequest;
 import com.example.haritha.model.Complaint;
-import com.example.haritha.model.User;
+import com.example.haritha.exception.ResourceNotFoundException;
 import com.example.haritha.repository.ComplaintRepository;
-import com.example.haritha.repository.UserRepository;
-import com.example.haritha.util.JwtUtil;
-import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class ComplaintService {
+    private final ComplaintRepository repo;
 
-    @Autowired
+    public ComplaintService(ComplaintRepository repo) {
+        this.repo = repo;
+    }
+    // CREATE
+    public Complaint create(Complaint r) {
+        return repo.save(r);
+    }
+
+
+    /*@Autowired
     private ComplaintRepository repo;
 
     @Autowired
@@ -24,20 +29,12 @@ public class ComplaintService {
     @Autowired
     private JwtUtil jwtUtil;
 
+    // 🟢 SUBMIT COMPLAINT
     public String submitComplaint(ComplaintRequest req,
                                   HttpServletRequest request) {
 
-        // 🔐 Extract token
-        String authHeader = request.getHeader("Authorization");
-        String token = authHeader.substring(7);
+        User user = getUserFromRequest(request);
 
-        // 👤 Extract email
-        String email = jwtUtil.extractEmail(token);
-
-        // 👤 Get user
-        User user = userRepository.findByEmail(email);
-
-        // 📌 Create complaint
         Complaint c = new Complaint();
 
         c.setUserId(user.getId());
@@ -47,11 +44,50 @@ public class ComplaintService {
         c.setLongitude(req.getLongitude());
 
         c.setStatus("PENDING");
-        c.setCreatedAt(LocalDateTime.now());
-        c.setUpdatedAt(LocalDateTime.now());
 
         repo.save(c);
 
         return "Complaint submitted successfully";
     }
+
+    // 🟢 GET MY COMPLAINTS
+    public List<Complaint> getMyComplaints(HttpServletRequest request) {
+
+        User user = getUserFromRequest(request);
+
+        return repo.findByUserId(user.getId());
+    }
+
+    // 🟢 GET ALL COMPLAINTS
+    public List<Complaint> getAllComplaints() {
+        return repo.findAll();
+    }
+
+    // 🔐 JWT EXTRACTION (SAFE + CLEAN)
+    private User getUserFromRequest(HttpServletRequest request) {
+
+        String authHeader = request.getHeader("Authorization");
+
+        // 🛑 FIX: safer null + format check
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            throw new RuntimeException("Missing or invalid Authorization header");
+        }
+
+        String token = authHeader.substring(7);
+
+        // 🛑 FIX: token safety check (important)
+        if (token.isEmpty()) {
+            throw new RuntimeException("Token is empty");
+        }
+
+        String email = jwtUtil.extractEmail(token);
+
+        User user = userRepository.findByEmail(email);
+
+        if (user == null) {
+            throw new RuntimeException("User not found");
+        }
+
+        return user;
+    }*/
 }

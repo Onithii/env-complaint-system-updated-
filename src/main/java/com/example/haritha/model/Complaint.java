@@ -1,6 +1,9 @@
 package com.example.haritha.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
+
+
 import java.time.LocalDateTime;
 
 @Entity
@@ -10,14 +13,28 @@ public class Complaint {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotNull(message = "User ID is required")
     private Long userId;
 
+    @NotBlank(message = "Complaint type is required")
+    @Size(min = 3, max = 500, message = "Complaint type must be between 3 and 500 characters")
     private String complaintType;
+
+    @NotBlank(message = "Description is required")
+    @Size(min = 10, max = 500, message = "Description must be between 10 and 500 characters")
     private String description;
 
+    @NotNull(message = "Latitude is required")
+    @DecimalMin(value = "-90.0", message = "Latitude must be valid")
+    @DecimalMax(value = "90.0", message = "Latitude must be valid")
     private Double latitude;
+
+    @NotNull(message = "Longitude is required")
+    @DecimalMin(value = "-180.0", message = "Longitude must be valid")
+    @DecimalMax(value = "180.0", message = "Longitude must be valid")
     private Double longitude;
 
+    @NotBlank(message = "Status is required")
     private String status = "PENDING";
 
     private Long assignedTo;
@@ -25,16 +42,10 @@ public class Complaint {
     private LocalDateTime createdAt = LocalDateTime.now();
     private LocalDateTime updatedAt = LocalDateTime.now();
 
-    // -------------------------
-    // GETTERS AND SETTERS
-    // -------------------------
+    // getters and setters
 
     public Long getId() {
         return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public Long getUserId() {
