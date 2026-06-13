@@ -9,9 +9,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.List;
 
+@CrossOrigin(origins = "*")
 @RestController
-@RequestMapping("/complaints")
+@RequestMapping("/api/complaints")
 public class ComplaintController {
+
+
 
     private ComplaintService service;
 
@@ -19,11 +22,17 @@ public class ComplaintController {
         this.service = service;
     }
 
-    // CREATE
+    @PostMapping
+    public Complaint create(@RequestBody Complaint c) {
+        System.out.println("DEBUG RECEIVED: " + c.getComplaintType());
+        return service.create(c);
+    }
+
+    /*// CREATE
     @PostMapping
     public Complaint create(@Valid @RequestBody Complaint c) {
         return service.create(c);
-    }
+    }*/
 
     // READ ALL
     @GetMapping
@@ -49,6 +58,8 @@ public class ComplaintController {
         service.delete(id);
         return "Complaint deleted successfully";
     }
+
+
 
 
     /*// 🟢 Submit complaint (JWT required)
