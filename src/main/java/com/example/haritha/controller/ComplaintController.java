@@ -25,6 +25,18 @@ public class ComplaintController {
         return service.create(c);
     }
 
+    // READ ALL
+    @GetMapping
+    public List<Complaint> getAll() {
+        return service.getAll();
+    }
+
+    // READ BY ID
+    @GetMapping("/{id}")
+    public Complaint getById(@PathVariable Long id) {
+        return service.getById(id);
+    }
+
     /*// 🟢 Submit complaint (JWT required)
     @PostMapping("/submit")
     public String submitComplaint(@RequestBody ComplaintRequest req,

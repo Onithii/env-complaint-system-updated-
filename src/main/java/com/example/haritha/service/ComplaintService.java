@@ -19,6 +19,18 @@ public class ComplaintService {
         return repo.save(r);
     }
 
+    // READ ALL
+    public List<Complaint> getAll() {
+        return repo.findAll();
+    }
+
+    // READ BY ID
+    public Complaint getById(Long id) {
+        return repo.findById(id)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Reservation not found with id: " + id));
+    }
+
 
     /*@Autowired
     private ComplaintRepository repo;
