@@ -4,6 +4,8 @@ import com.example.haritha.model.Complaint;
 import com.example.haritha.exception.ResourceNotFoundException;
 import com.example.haritha.repository.ComplaintRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 
@@ -28,15 +30,15 @@ public class ComplaintService {
     public Complaint getById(Long id) {
         return repo.findById(id)
                 .orElseThrow(() ->
-                        new ResourceNotFoundException("Reservation not found with id: " + id));
+                        new ResourceNotFoundException("Complaint not found with id: " + id));
     }
 
-    // UPDATE (STATUS REMOVED)
+    // UPDATE
     public Complaint update(Long id, Complaint newData) {
 
         Complaint existing = repo.findById(id)
                 .orElseThrow(() ->
-                        new ResourceNotFoundException("Reservation not found with id: " + id));
+                        new ResourceNotFoundException("Complaint not found with id: " + id));
 
         existing.setComplaintType(newData.getComplaintType());
         existing.setDescription(newData.getDescription());
@@ -46,6 +48,18 @@ public class ComplaintService {
 
         return repo.save(existing);
     }
+
+    // DELETE
+    public void delete(Long id) {
+
+        Complaint existing = repo.findById(id)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Complaint not found with id: " + id));
+
+        repo.delete(existing);
+    }
+
+
 
 
     /*@Autowired

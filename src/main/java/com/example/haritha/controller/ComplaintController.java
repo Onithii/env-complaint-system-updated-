@@ -43,6 +43,14 @@ public class ComplaintController {
         return service.update(id, r);
     }
 
+    // DELETE
+    @DeleteMapping("/{id}")
+    public String delete(@PathVariable Long id) {
+        service.delete(id);
+        return "Complaint deleted successfully";
+    }
+
+
     /*// 🟢 Submit complaint (JWT required)
     @PostMapping("/submit")
     public String submitComplaint(@RequestBody ComplaintRequest req,
