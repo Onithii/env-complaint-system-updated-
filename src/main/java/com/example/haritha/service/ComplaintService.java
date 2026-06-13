@@ -31,6 +31,22 @@ public class ComplaintService {
                         new ResourceNotFoundException("Reservation not found with id: " + id));
     }
 
+    // UPDATE (STATUS REMOVED)
+    public Complaint update(Long id, Complaint newData) {
+
+        Complaint existing = repo.findById(id)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Reservation not found with id: " + id));
+
+        existing.setComplaintType(newData.getComplaintType());
+        existing.setDescription(newData.getDescription());
+        existing.setLatitude(newData.getLatitude());
+        existing.setLongitude(newData.getLongitude());
+        existing.setStatus(newData.getStatus());
+
+        return repo.save(existing);
+    }
+
 
     /*@Autowired
     private ComplaintRepository repo;

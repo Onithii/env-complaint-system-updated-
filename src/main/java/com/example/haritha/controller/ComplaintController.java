@@ -37,6 +37,12 @@ public class ComplaintController {
         return service.getById(id);
     }
 
+    // UPDATE
+    @PutMapping("/{id}")
+    public Complaint update(@PathVariable Long id, @RequestBody Complaint r) {
+        return service.update(id, r);
+    }
+
     /*// 🟢 Submit complaint (JWT required)
     @PostMapping("/submit")
     public String submitComplaint(@RequestBody ComplaintRequest req,
