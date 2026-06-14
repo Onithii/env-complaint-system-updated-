@@ -1,16 +1,11 @@
-//Doorway into your backend.
-// Every request from the frontend enters through a controller
-// before reaching your business logic and database.
-
 package com.example.haritha.controller;
 
-import com.example.haritha.model.Complaint;
+import com.example.haritha.dto.ComplaintRequest;
+import com.example.haritha.dto.ComplaintResponse;
 import com.example.haritha.service.ComplaintService;
-import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.List;
 
 @CrossOrigin(origins = "*")
@@ -18,64 +13,56 @@ import java.util.List;
 @RequestMapping("/api/complaints")
 public class ComplaintController {
 
-
-
-    private ComplaintService service;
+    private final ComplaintService service;
 
     public ComplaintController(ComplaintService service) {
         this.service = service;
     }
 
-    //CREATE
+    // =======================
+    // CREATE COMPLAINT
+    // =======================
     @PostMapping
-    public Complaint create(@Valid @RequestBody Complaint c) {
-        return service.create(c);
+    public ComplaintResponse create(
+            @Valid @RequestBody ComplaintRequest dto) {
+
+        return service.create(dto);
     }
 
-    // READ ALL
+    // =======================
+    // GET ALL COMPLAINTS
+    // =======================
     @GetMapping
-    public List<Complaint> getAll() {
+    public List<ComplaintResponse> getAll() {
         return service.getAll();
     }
 
-    // READ BY ID
+    // =======================
+    // GET BY ID
+    // =======================
     @GetMapping("/{id}")
-    public Complaint getById(@PathVariable Long id) {
+    public ComplaintResponse getById(@PathVariable Long id) {
         return service.getById(id);
     }
 
-    // UPDATE
+    // =======================
+    // UPDATE COMPLAINT
+    // =======================
     @PutMapping("/{id}")
-    public Complaint update(@PathVariable Long id, @RequestBody Complaint r) {
-        return service.update(id, r);
+    public ComplaintResponse update(
+            @PathVariable Long id,
+            @RequestBody ComplaintRequest dto) {
+
+        return service.update(id, dto);
     }
 
-    // DELETE
+    // =======================
+    // DELETE COMPLAINT
+    // =======================
     @DeleteMapping("/{id}")
     public String delete(@PathVariable Long id) {
+
         service.delete(id);
         return "Complaint deleted successfully";
     }
-
-
-
-
-    /*// 🟢 Submit complaint (JWT required)
-    @PostMapping("/submit")
-    public String submitComplaint(@RequestBody ComplaintRequest req,
-                                  HttpServletRequest request) {
-        return complaintService.submitComplaint(req, request);
-    }
-
-    // 🟢 GET MY COMPLAINTS (JWT-based)
-    @GetMapping("/my")
-    public List<Complaint> getMyComplaints(HttpServletRequest request) {
-        return complaintService.getMyComplaints(request);
-    }
-
-    // 🟢 GET ALL COMPLAINTS (admin/authority later)
-    @GetMapping("/all")
-    public List<Complaint> getAllComplaints() {
-        return complaintService.getAllComplaints();
-    }*/
 }
