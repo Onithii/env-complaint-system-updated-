@@ -1,57 +1,75 @@
 package com.example.haritha.service;
 
 import com.example.haritha.dto.ComplaintRequest;
+import com.example.haritha.dto.ComplaintResponse;
+import com.example.haritha.exception.ResourceNotFoundException;
+import com.example.haritha.mapper.ComplaintMapper;
 import com.example.haritha.model.Complaint;
-import com.example.haritha.model.User;
 import com.example.haritha.repository.ComplaintRepository;
-import com.example.haritha.repository.UserRepository;
-import com.example.haritha.util.JwtUtil;
-import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class ComplaintService {
 
-    @Autowired
-    private ComplaintRepository repo;
+    private final ComplaintRepository repo;
 
-    @Autowired
-    private UserRepository userRepository;
+    public ComplaintService(ComplaintRepository repo) {
+        this.repo = repo;
+    }
 
-    @Autowired
-    private JwtUtil jwtUtil;
+    // CREATE
+    public ComplaintResponse create(ComplaintRequest dto) {
 
-    public String submitComplaint(ComplaintRequest req,
-                                  HttpServletRequest request) {
+        Complaint complaint = ComplaintMapper.toEntity(dto);
 
-        // 🔐 Extract token
-        String authHeader = request.getHeader("Authorization");
-        String token = authHeader.substring(7);
+        return ComplaintMapper.toDTO(repo.save(complaint));
+    }
 
-        // 👤 Extract email
-        String email = jwtUtil.extractEmail(token);
+    // GET ALL
+    public List<ComplaintResponse> getAll() {
 
-        // 👤 Get user
-        User user = userRepository.findByEmail(email);
+        return repo.findAll()
+                .stream()
+                .map(ComplaintMapper::toDTO)
+                .toList();
+    }
 
-        // 📌 Create complaint
-        Complaint c = new Complaint();
+    // GET BY ID
+    public ComplaintResponse getById(Long id) {
 
-        c.setUserId(user.getId());
-        c.setComplaintType(req.getComplaintType());
-        c.setDescription(req.getDescription());
-        c.setLatitude(req.getLatitude());
-        c.setLongitude(req.getLongitude());
+        Complaint complaint = repo.findById(id)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Complaint not found with id: " + id));
 
-        c.setStatus("PENDING");
-        c.setCreatedAt(LocalDateTime.now());
-        c.setUpdatedAt(LocalDateTime.now());
+        return ComplaintMapper.toDTO(complaint);
+    }
 
-        repo.save(c);
+    // UPDATE
+    public ComplaintResponse update(Long id, ComplaintRequest dto) {
 
-        return "Complaint submitted successfully";
+        Complaint existing = repo.findById(id)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Complaint not found with id: " + id));
+
+        existing.setComplaintType(dto.getComplaintType());
+        existing.setDescription(dto.getDescription());
+        existing.setLatitude(dto.getLatitude());
+        existing.setLongitude(dto.getLongitude());
+        existing.setUpdatedAt(LocalDateTime.now());
+
+        return ComplaintMapper.toDTO(repo.save(existing));
+    }
+
+    // DELETE
+    public void delete(Long id) {
+
+        Complaint existing = repo.findById(id)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Complaint not found with id: " + id));
+
+        repo.delete(existing);
     }
 }

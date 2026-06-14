@@ -1,26 +1,49 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Submit Complaint</title>
+    <meta charset="UTF-8">
+    <title>Haritha Complaint System</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
 <div class="container">
-    <h2>Submit Complaint</h2>
+    <h1>Submit Complaint</h1>
 
-    <input type="text" id="type" placeholder="Complaint Type">
-    <input type="text" id="description" placeholder="Description">
-    <input type="number" id="latitude" placeholder="Latitude">
-    <input type="number" id="longitude" placeholder="Longitude">
+    <form id="complaintForm">
+        <input type="text" id="complaintType" placeholder="Complaint Type" required>
 
-    <button onclick="submitComplaint()">Submit</button>
+        <textarea id="description" placeholder="Description" required></textarea>
 
-    <button onclick="goBack()">Back</button>
+        <input type="number" id="latitude" placeholder="Latitude" step="any" required>
+
+        <input type="number" id="longitude" placeholder="Longitude" step="any" required>
+
+        <button type="submit">Submit</button>
+    </form>
+
+    <p id="message"></p>
+
+    <!-- 📋 Complaints Table -->
+    <h2>Submitted Complaints</h2>
+
+    <table border="1" width="100%" id="complaintsTable">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Type</th>
+            <th>Description</th>
+            <th>Latitude</th>
+            <th>Longitude</th>
+        </tr>
+        </thead>
+
+        <tbody id="complaintsTableBody">
+        <!-- JS will insert rows here -->
+        </tbody>
+    </table>
 </div>
 
-<script src="js/auth.js"></script>
 <script src="js/complaint.js"></script>
-
 </body>
 </html>
