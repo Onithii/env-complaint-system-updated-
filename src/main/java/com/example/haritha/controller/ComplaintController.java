@@ -1,3 +1,7 @@
+//Doorway into your backend.
+// Every request from the frontend enters through a controller
+// before reaching your business logic and database.
+
 package com.example.haritha.controller;
 
 import com.example.haritha.model.Complaint;
@@ -22,17 +26,11 @@ public class ComplaintController {
         this.service = service;
     }
 
-    @PostMapping
-    public Complaint create(@RequestBody Complaint c) {
-        System.out.println("DEBUG RECEIVED: " + c.getComplaintType());
-        return service.create(c);
-    }
-
-    /*// CREATE
+    //CREATE
     @PostMapping
     public Complaint create(@Valid @RequestBody Complaint c) {
         return service.create(c);
-    }*/
+    }
 
     // READ ALL
     @GetMapping

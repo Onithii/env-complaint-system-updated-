@@ -6,10 +6,10 @@ import jakarta.validation.constraints.*;
 
 import java.time.LocalDateTime;
 
-@Entity
+@Entity //"Create a database table for this class."
 public class Complaint {
 
-    @Id
+    @Id //primary key
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
